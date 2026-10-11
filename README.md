@@ -5,6 +5,7 @@
 | 關卡 | 主題 | 遊戲 |
 |---|---|---|
 | 第3關 | No. 46–66 身體部位與狀態 | [健康小隊長 Health Hero](level03/) |
+| 五年級 | 單元課文（Sunday、science / art / PE class、ice hockey） | [麻糬養成闖關 Pet Pal English](pet5/) |
 
 ## 第3關 玩法
 1. 走到頭上有「!」的同學旁邊，聽他用英文說哪裡不舒服（預設無字幕）。
@@ -23,3 +24,12 @@
 - 第 47–66 句：ElevenLabs（[elevenlabs.io](https://elevenlabs.io)）Alice 語音產生。依 ElevenLabs 條款，免費方案產生的內容不得商業使用，非商業分享時須標註 ElevenLabs。
 - 第 46 句：開源 Kokoro 語音模型合成（`bf_alice` 聲音）。
 - 本專案僅供教學、非商業使用。
+
+## 五年級 麻糬養成闖關（pet5/）
+- 網址：https://imacipadtw-lang.github.io/foop677/pet5/
+- 玩法：聽英文選圖卡、排句子（點選或拖曳）、選回應、情境對話；答對得到能量，餵寵物「麻糬」長大、布置小屋、換造型。
+- 以 iPad 橫式為主；直式會提示把 iPad 橫過來（也可選擇先用直式玩）。
+- 進度只存在各自裝置的瀏覽器（localStorage）；無法儲存時會提示，遊戲仍可進行。
+- 發音：教材有 `audio=` 錄音檔時優先播放，否則使用裝置內建英語語音（只朗讀英文）。
+- 老師設定（首頁 →「老師設定」）：可貼入／修改教材、檢查格式、預覽題目、調整題數、複製學生版連結或下載學生版檔案、重設進度。
+- 示範教材核對說明：原文撇號統一為「'」；「Does she have science class on Monday?」未交代 she 是誰，改用「星期一＋自然課」圖卡出題；課文開頭是 Sunday，後面卻問 PE class today，遊戲不出需要判斷星期幾的題目。
