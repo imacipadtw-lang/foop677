@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="土城國小英文700單字 第3關（No. 46–66 身體部位與狀態）Q版3D英語聽力闖關遊戲">
-<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;padding:0}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html,body{height:100%}body{margin:0;padding:0}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
 </head>
 <body>
 <title>健康小隊長 Health Hero</title>
@@ -81,6 +81,7 @@ canvas#map,canvas.gl{position:absolute;inset:0;width:100%;height:100%;touch-acti
 .card h2{margin:0;font-family:var(--font-en);font-size:30px;line-height:1.1;text-wrap:balance}
 .card h2 .zh{display:block;font-family:var(--font-zh);font-weight:400;font-size:19px;color:var(--ink-soft);margin-top:4px}
 .card p{margin:0}
+.card>*{flex-shrink:0}
 .tiny{font-size:14px;color:var(--ink-soft)}
 
 /* title */
@@ -141,6 +142,15 @@ canvas#map,canvas.gl{position:absolute;inset:0;width:100%;height:100%;touch-acti
 .par li{margin:2px 0}
 .close{align-self:flex-end}
 
+/* pass certificate on the results screen */
+.cert{position:relative;border:4px dashed var(--sun-deep);background:#fff8dc;border-radius:22px;padding:16px 16px 14px;text-align:center;display:flex;flex-direction:column;gap:6px;overflow:hidden}
+.cert .big{font-family:var(--font-en);font-weight:700;font-size:clamp(26px,6vw,38px);line-height:1.05;color:var(--cross)}
+.cert .zh1{font-size:clamp(20px,4.6vw,26px);font-weight:400}
+.cert .ticket{display:inline-flex;align-self:center;align-items:center;gap:8px;background:var(--cross);color:#fff;border-radius:14px;padding:10px 16px;font-size:clamp(18px,4.4vw,22px);line-height:1.3;box-shadow:0 4px 0 #a8322a}
+.cert .ticket .en{display:block;font-size:14px;opacity:.95}
+.cert .stamp{position:absolute;right:10px;top:10px;transform:rotate(12deg);border:3px solid var(--cross);color:var(--cross);border-radius:10px;padding:2px 8px;font-family:var(--font-en);font-weight:700;font-size:15px;letter-spacing:.12em;background:rgba(255,255,255,.6)}
+.cert .when{font-size:14px;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+canvas#fireworks{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:40}
 @keyframes pop{0%{transform:scale(.4);opacity:0}70%{transform:scale(1.15);opacity:1}100%{transform:scale(1)}}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 .pop{animation:pop .45s ease both}
@@ -163,6 +173,8 @@ canvas#map,canvas.gl{position:absolute;inset:0;width:100%;height:100%;touch-acti
   .count{font-size:16px;padding:3px 10px}
   .panel{margin-block:8px 10px}
   .card{padding:16px}
+  .cert{padding-top:36px}
+  .cert .stamp{font-size:13px;top:8px}
 }
 </style>
 
@@ -174,6 +186,7 @@ canvas#map,canvas.gl{position:absolute;inset:0;width:100%;height:100%;touch-acti
     </div>
     <span class="count prog" id="progBox" title="這一輪幫助的同學">0/10</span>
     <span class="count" id="starBox" title="得到的星星"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.8-4.9 4.6 1.3 6.5L12 17.2 6.1 20.4l1.3-6.5L2.5 9.3l6.6-.8z" fill="#fff" stroke="#22324a" stroke-width="2" stroke-linejoin="round"/></svg><span id="starNum">0</span></span>
+    <button class="chipbtn" id="zoomBtn" aria-label="切換全景或放大">放大 <span class="en">Zoom</span></button>
     <button class="chipbtn" id="homeBtn" aria-label="回首頁 Home">首頁 <span class="en">Home</span></button>
   </header>
   <div class="stage" id="stage"><canvas id="map" aria-label="校園地圖，用方向鍵或點地圖走路"></canvas>
@@ -243,6 +256,7 @@ canvas#map,canvas.gl{position:absolute;inset:0;width:100%;height:100%;touch-acti
 <div class="ov" id="ovParent" hidden><div class="card par" id="parentCard"></div></div>
 <!-- results -->
 <div class="ov" id="ovEnd" hidden><div class="card" id="endCard"></div></div>
+<canvas id="fireworks" hidden aria-hidden="true"></canvas>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
@@ -298,31 +312,50 @@ const TREES = [[260,680,30],[360,720,24],[480,690,34],[600,720,22],[250,230,0],[
 
 /* ---------- storage (per-viewer convenience) ---------- */
 const SKEY="healthhero-l3-v1";
-let saved={best:{},sub:"none",stars:0};
+let saved={best:{},sub:"none",stars:0,zoom:"all"};
 try{ const s=JSON.parse(localStorage.getItem(SKEY)||"null"); if(s&&typeof s==="object") saved=Object.assign(saved,s); }catch(e){}
 function persist(){ try{ localStorage.setItem(SKEY,JSON.stringify(saved)); }catch(e){} }
 
-/* ---------- audio ---------- */
-const cache={}; let curAudio=null, seqTok=0;
-function clip(k){ if(!AUD[k]) return null; if(!cache[k]){ cache[k]=new Audio(AUD[k]); cache[k].preload="auto"; } return cache[k]; }
-function stopAudio(){ seqTok++; if(curAudio){ try{curAudio.pause();}catch(e){} } }
+let ac=null;
+/* ---------- audio ----------
+   One shared <audio> element. iPad/iPhone Safari only lets an element play on its own (e.g. when the
+   hero reaches a friend) after that same element was started by a tap, so unlockAudio() runs on Start. */
+const player=new Audio(); player.preload="auto";
+try{ player.preservesPitch=true; player.webkitPreservesPitch=true; }catch(e){}
+let seqTok=0, unlocked=false, curKey=null;
+function unlockAudio(){
+  if(unlocked) return; unlocked=true;
+  try{
+    if(ac===null){ ac=new (window.AudioContext||window.webkitAudioContext)(); }
+    if(ac&&ac.state==="suspended") ac.resume();
+  }catch(e){}
+  try{
+    player.muted=true; player.src=AUD.s46; curKey="s46";
+    const p=player.play();
+    const done=()=>{ try{ player.pause(); player.currentTime=0; }catch(e){} player.muted=false; };
+    if(p&&p.then) p.then(done,done); else done();
+  }catch(e){ player.muted=false; }
+}
+function stopAudio(){ seqTok++; try{ player.pause(); }catch(e){} }
 function playOne(k,rate,tok){
   return new Promise(res=>{
-    const a=clip(k); if(!a||tok!==seqTok){res();return;}
-    if(curAudio&&curAudio!==a){try{curAudio.pause();}catch(e){}}
-    curAudio=a; a.pause(); a.currentTime=0; a.playbackRate=rate||1;
-    try{a.preservesPitch=true;a.webkitPreservesPitch=true;}catch(e){}
-    let done=false; const fin=()=>{if(done)return;done=true;clearTimeout(t);res();};
-    const t=setTimeout(fin,9000);
-    a.onended=fin; a.onerror=fin;
-    const p=a.play(); if(p&&p.catch) p.catch(fin);
+    if(!AUD[k]||tok!==seqTok){ res(); return; }
+    let done=false; const fin=()=>{ if(done) return; done=true; clearTimeout(t); player.onended=null; player.onerror=null; res(); };
+    const t=setTimeout(fin,6000);
+    try{
+      player.muted=false;
+      if(curKey!==k){ player.src=AUD[k]; curKey=k; }
+      else { player.pause(); player.currentTime=0; }
+      player.playbackRate=rate||1; try{ player.preservesPitch=true; player.webkitPreservesPitch=true; }catch(e){}
+      player.onended=fin; player.onerror=fin;
+      const p=player.play(); if(p&&p.catch) p.catch(fin);
+    }catch(e){ fin(); }
   });
 }
 async function play(keys,rate){ stopAudio(); const tok=seqTok; for(const k of [].concat(keys)){ if(tok!==seqTok) return false; await playOne(k,rate,tok); await wait(120); } return tok===seqTok; }
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
-let ac=null;
 function tone(fs,type="triangle",step=.09,len=.2,vol=.16){
-  try{ ac=ac||new (window.AudioContext||window.webkitAudioContext)(); const t0=ac.currentTime;
+  try{ ac=ac||new (window.AudioContext||window.webkitAudioContext)(); if(ac.state==='suspended') ac.resume(); const t0=ac.currentTime;
     fs.forEach((f,i)=>{const o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.value=f;
       g.gain.setValueAtTime(0,t0+i*step);g.gain.linearRampToValueAtTime(vol,t0+i*step+.02);
       g.gain.exponentialRampToValueAtTime(.001,t0+i*step+len);o.connect(g).connect(ac.destination);o.start(t0+i*step);o.stop(t0+i*step+len+.05);});
@@ -345,7 +378,7 @@ function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;","
 const ROUND=10;
 const G={mode:"title",player:{x:550,y:440,dir:1,phase:0,moving:false},target:null,keys:{},
   queue:[],idx:0,patient:null,hist:[],lastSt:null,sub:saved.sub||"none",
-  hint:0,miss:0,roundStars:0,results:[],cool:0};
+  hint:0,miss:0,roundStars:0,results:[],cool:0,zoom:saved.zoom==="near"?"near":"all"};
 const COLORS=[["#ff8fb1","#5b3a29"],["#7cc4f2","#2b2b2b"],["#9ad06b","#6b4226"],["#c6a2ff","#1f1f1f"],["#ffb067","#3b2a20"],["#73d6c4","#4a2f1e"]];
 
 function buildQueue(){
@@ -409,7 +442,10 @@ $("#panel").addEventListener("click",e=>{
 
 function startListen(){
   G.mode="listen"; G.target=null; G.patient.state="talk"; renderPanel();
-  play("s"+G.patient.d.id).then(()=>{ if(G.mode==="listen"){ G.mode="escort"; G.patient.state="follow"; G.hist=[]; renderPanel(); } });
+  const pt=G.patient; let done=false;
+  const go=()=>{ if(done) return; done=true; clearTimeout(cap); if(G.mode==="listen"&&G.patient===pt){ G.mode="escort"; pt.state="follow"; G.hist=[]; renderPanel(); } };
+  const cap=setTimeout(go,3500);
+  play("s"+pt.d.id).then(go,go);
 }
 
 /* ---------- station logic ---------- */
@@ -533,8 +569,9 @@ $("#bodyCard").addEventListener("click",e=>{
     document.querySelectorAll(`#bodyCard .zone[data-part="${part}"]`).forEach(x=>x.classList.add("hit"));
     const nm=PART_NAME[part]; $("#btLabel").innerHTML=`<span class="pop" style="display:inline-block">✔ ${nm[0]} ${nm[1]}</span>`;
     if(BT.miss===0) BT.first++;
-    if(BT.kind==="nurse"){ G.miss+=Math.min(1,BT.miss); wait(900).then(()=>{ $("#ovBody").hidden=true; BT=null; showWin(ST.nurse); }); }
-    else { BT.miss=0; setTimeout(()=>{ BT.i++; if(BT.i>=BT.items.length){ const f=BT.first; $("#ovBody").hidden=true; BT=null; endRound(f);} else btAsk(); }, 1100); }
+    const sess=BT;
+    if(BT.kind==="nurse"){ G.miss+=Math.min(1,BT.miss); wait(900).then(()=>{ if(BT!==sess) return; $("#ovBody").hidden=true; BT=null; showWin(ST.nurse); }); }
+    else { BT.miss=0; setTimeout(()=>{ if(BT!==sess) return; BT.i++; if(BT.i>=BT.items.length){ const f=BT.first; $("#ovBody").hidden=true; BT=null; endRound(f);} else btAsk(); }, 1100); }
   } else {
     BT.miss++; boop(); z.classList.add("miss"); setTimeout(()=>z.classList.remove("miss"),600);
     const nm=PART_NAME[part]; $("#btLabel").innerHTML=`<span class="shake" style="display:inline-block;color:#c4473a">這是 ${nm[1]} <span class="en">${nm[0]}</span>，再聽一次！</span>`;
@@ -557,18 +594,59 @@ function endRound(bonus){
   const total=G.roundStars+bonus, max=ROUND*3+5;
   const mastered=DATA.filter(d=>(saved.best[d.id]||0)>=3).length;
   const rows=G.results.map(r=>`<div class="row"><span class="no">${r.d.id}</span><div class="txt"><div class="e">${esc(r.d.en)}</div><div class="z">${esc(r.d.zh)}</div></div><div class="btns">${msStars(r.n)}<button class="mini" data-k="s${r.d.id}" aria-label="播放">${SPK}</button></div></div>`).join("");
-  $("#endCard").innerHTML=`<h2>任務完成！<span class="zh">Mission complete · 你幫助了 ${ROUND} 位同學</span></h2>
+  const now=new Date(), pad=n=>String(n).padStart(2,"0");
+  const when=`${now.getFullYear()}/${pad(now.getMonth()+1)}/${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  $("#endCard").innerHTML=`<div class="cert pop">
+      <span class="stamp">CLEAR</span>
+      <div class="big">Level 03 Clear!</div>
+      <div class="zh1">🎉 恭喜你通過第3關！</div>
+      <div class="ticket"><span>請把這個畫面拿給老師看，<br>領取一張刮刮卡！<span class="en">Show this screen to your teacher to get a scratch card!</span></span></div>
+      <div class="when">完成時間 ${when} · 星星 ${total} / ${max}</div>
+    </div>
+    <h2>任務完成！<span class="zh">Mission complete · 你幫助了 ${ROUND} 位同學</span></h2>
     <div class="task"><span class="count">${STAR(true)} ${total} / ${max}</span><span class="tiny">護理師的考驗答對 ${bonus}/5 · 第3關精熟句子 ${mastered}/21</span></div>
     <p class="tiny">星星少的句子再按 🔊 聽幾次，下一輪會優先出現還沒練熟的句子。</p>
     <div class="list">${rows}</div>
     <div class="bigbtns"><button class="act main" id="againBtn">再玩一輪 <span class="en">Play again</span></button><button class="act sun" id="endLearn">先聽一聽</button><button class="act" id="endHome">首頁</button></div>`;
   $("#ovEnd").hidden=false;
+  fireworks(6500);
 }
+/* ---------- fireworks (results screen) ---------- */
+let fwRun=0;
+function fireworks(ms){
+  const c=$("#fireworks"); if(!c) return; const g=c.getContext("2d"); if(!g) return;
+  const id=++fwRun, dpr=Math.min(2,devicePixelRatio||1);
+  const fit=()=>{ c.width=innerWidth*dpr; c.height=innerHeight*dpr; g.setTransform(dpr,0,0,dpr,0,0); };
+  fit(); c.hidden=false;
+  const cols=["#ffc83d","#e24f4f","#2fb39a","#3d8fd6","#ff8fb1","#c6a2ff","#ffffff"];
+  const parts=[], rockets=[]; const t0=performance.now(); let lastLaunch=0, prev=t0;
+  const burst=(x,y)=>{ const col=cols[Math.random()*cols.length|0], col2=cols[Math.random()*cols.length|0], n=reduce?24:60;
+    for(let i=0;i<n;i++){ const a=Math.PI*2*i/n+Math.random()*.1, v=(reduce?2.2:3.2)+Math.random()*2.6;
+      parts.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,life:1,col:i%3?col:col2,r:2+Math.random()*1.8}); }
+    tone([880+Math.random()*300],"triangle",.05,.12,.05); };
+  const launch=()=>{ const W2=innerWidth, H2=innerHeight; rockets.push({x:W2*(.15+Math.random()*.7),y:H2+10,vy:-(H2*.016+Math.random()*3),ty:H2*(.12+Math.random()*.35)}); };
+  for(let i=0;i<3;i++) burst(innerWidth*(.2+.3*i), innerHeight*(.22+.08*(i%2)));
+  function step(t){
+    if(id!==fwRun) return;
+    const el=t-t0, k=Math.min(2,(t-prev)/16.7); prev=t;
+    g.clearRect(0,0,innerWidth,innerHeight);
+    if(!reduce && el<ms-1500 && t-lastLaunch>380){ launch(); if(Math.random()<.4) launch(); lastLaunch=t; }
+    for(let i=rockets.length-1;i>=0;i--){ const r=rockets[i]; r.y+=r.vy*k; g.fillStyle="#fff3b0"; g.beginPath(); g.arc(r.x,r.y,3,0,7); g.fill();
+      if(r.y<=r.ty){ burst(r.x,r.y); rockets.splice(i,1); } }
+    for(let i=parts.length-1;i>=0;i--){ const p=parts[i]; p.x+=p.vx*k; p.y+=p.vy*k; p.vy+=.06*k; p.vx*=.985; p.vy*=.985; p.life-=.012*k;
+      if(p.life<=0){ parts.splice(i,1); continue; }
+      g.globalAlpha=Math.max(0,p.life); g.fillStyle=p.col; g.beginPath(); g.arc(p.x,p.y,p.r,0,7); g.fill(); }
+    g.globalAlpha=1;
+    if(el<ms || parts.length){ requestAnimationFrame(step); } else { g.clearRect(0,0,innerWidth,innerHeight); c.hidden=true; }
+  }
+  requestAnimationFrame(step);
+}
+function stopFireworks(){ fwRun++; const c=$("#fireworks"); if(c){ const g=c.getContext("2d"); g&&g.clearRect(0,0,c.width,c.height); c.hidden=true; } }
 $("#endCard").addEventListener("click",e=>{
   const m=e.target.closest(".mini"); if(m){ play(m.dataset.k); return; }
-  if(e.target.closest("#againBtn")){ $("#ovEnd").hidden=true; startRound(); }
-  if(e.target.closest("#endLearn")){ $("#ovEnd").hidden=true; goTitle(); openLearn(); }
-  if(e.target.closest("#endHome")){ $("#ovEnd").hidden=true; goTitle(); }
+  if(e.target.closest("#againBtn")){ unlockAudio(); stopFireworks(); $("#ovEnd").hidden=true; startRound(); }
+  if(e.target.closest("#endLearn")){ stopFireworks(); $("#ovEnd").hidden=true; goTitle(); openLearn(); }
+  if(e.target.closest("#endHome")){ stopFireworks(); $("#ovEnd").hidden=true; goTitle(); }
 });
 
 /* ---------- title / learn / parents ---------- */
@@ -580,7 +658,7 @@ document.querySelectorAll("[data-sub]").forEach(b=>b.addEventListener("click",()
   document.querySelectorAll("[data-sub]").forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"));
 }));
 document.querySelectorAll("[data-sub]").forEach(x=>x.setAttribute("aria-pressed",x.dataset.sub===G.sub?"true":"false"));
-$("#startBtn").addEventListener("click",()=>{ tone([660],"sine",.1,.05,.01); $("#ovTitle").hidden=true; startRound(); });
+$("#startBtn").addEventListener("click",()=>{ unlockAudio(); tone([660],"sine",.1,.05,.01); $("#ovTitle").hidden=true; startRound(); });
 $("#homeBtn").addEventListener("click",()=>{ ["#ovWin","#ovBody","#ovEnd","#ovLearn","#ovParent"].forEach(s=>$(s).hidden=true); BT=null; goTitle(); });
 $("#learnBtn").addEventListener("click",openLearn);
 function openLearn(){
@@ -607,6 +685,8 @@ $("#parentBtn").addEventListener("click",()=>{
   <ul><li>預設<b>無字幕</b>，孩子只能靠耳朵；可按「再聽」「慢速」。按「提示」才會先出現英文、再出現中文，用了提示星星會少一顆。</li>
   <li>答錯時會再播一次句子，讓孩子多聽，不是直接給答案。</li>
   <li>系統記得每個句子的最佳星數，下一輪優先出現還沒練熟的句子。</li></ul>
+  <h3>通關獎勵</h3>
+  <ul><li>完成一整輪（幫助 10 位同學＋護理師的考驗）就算通過第3關，畫面會放煙火並顯示完成時間與星星數。請孩子把這個畫面拿給老師看，可以領取一張刮刮卡。</li></ul>
   <h3>在家可以這樣陪</h3>
   <ul><li>建議一次玩一輪（約 8–10 分鐘），結束後看「任務完成」清單，請孩子把一顆星的句子跟著唸。</li>
   <li>玩「Simon says」：家長說 Touch your nose.，孩子摸鼻子；再交換角色讓孩子當護理師。</li>
@@ -640,13 +720,14 @@ function init3D(){
   try{ renderer=new THREE.WebGLRenderer({antialias:true}); }catch(e){ return null; }
   if(!renderer.getContext()) return null;
   const T=THREE, U=0.1, HW=W*U/2, HH=H*U/2;
-  renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.75));
+  let pr=Math.min(devicePixelRatio||1,1.75); renderer.setPixelRatio(pr);
+  let slowT=0, slowN=0;
   renderer.setClearColor(0xbfe3f5);
   renderer.domElement.className="gl";
   renderer.domElement.setAttribute("aria-label","3D 校園地圖，用方向鍵或點地圖走路");
   stageEl.insertBefore(renderer.domElement,cv); cv.style.display="none";
-  const scene=new T.Scene(); scene.fog=new T.Fog(0xbfe3f5,130,240);
-  const camera=new T.PerspectiveCamera(42,1,0.5,500);
+  const scene=new T.Scene();
+  const camera=new T.PerspectiveCamera(42,1,0.5,1500);
   const grad=new T.DataTexture(new Uint8Array([105,105,105,175,175,175,240,240,240]),3,1,T.RGBFormat);
   grad.minFilter=grad.magFilter=T.NearestFilter; grad.generateMipmaps=false; grad.needsUpdate=true;
   const M=(c,o)=>new T.MeshToonMaterial(Object.assign({color:c,gradientMap:grad},o||{}));
@@ -662,6 +743,7 @@ function init3D(){
   const tt=new T.CanvasTexture(tc); tt.wrapS=tt.wrapT=T.RepeatWrapping; tt.repeat.set((W*U-2.8)/4.4,(H*U-2.8)/4.4);
   const court=mesh(new T.PlaneGeometry(W*U-2.8,H*U-2.8),new T.MeshLambertMaterial({map:tt,color:0xf4f8fa}),0,0,0); court.rotation.x=-Math.PI/2;
   const blobTex=(()=>{ const c=document.createElement("canvas"); c.width=c.height=64; const g=c.getContext("2d"); const r=g.createRadialGradient(32,32,2,32,32,31); r.addColorStop(0,"rgba(34,50,74,.45)"); r.addColorStop(1,"rgba(34,50,74,0)"); g.fillStyle=r; g.fillRect(0,0,64,64); return new T.CanvasTexture(c); })();
+  const sharedBlob=null;
   const blob=(w,d,x,z,parent)=>{ const m=mesh(new T.PlaneGeometry(w,d),new T.MeshBasicMaterial({map:blobTex,transparent:true,depthWrite:false}),x,0.03,z,parent); m.rotation.x=-Math.PI/2; return m; };
 
   // station signs (canvas textures, redrawn once the web fonts arrive)
@@ -758,7 +840,7 @@ function init3D(){
       mesh(new T.SphereGeometry(1.5,20,14),hair,0,0.05,-0.35,head).scale.set(1.04,1.02,0.9);
       if(o.girl){ for(const sx of [-1,1]){ mesh(new T.SphereGeometry(0.55,14,10),hair,sx*1.6,0.35,-0.25,head); mesh(new T.SphereGeometry(0.2,8,6),M(0xff6f91),sx*1.35,0.8,-0.1,head); } }
     }
-    g.scale.setScalar(o.hero?1.25:1.2);
+    g.scale.setScalar(o.hero?1.55:1.5);
     scene.add(g);
     return {g,root,legs,arms,body,head,smile,frown,yaw:0,lx:null,lz:null,t:0};
   }
@@ -773,7 +855,20 @@ function init3D(){
   const hero=makeKid({shirt:0xffffff,hero:true});
   let pkid=null, pref=null;
   const camT=new T.Vector3(0,0,8), ray=new T.Raycaster(), ndc=new T.Vector2(), plane=new T.Plane(new T.Vector3(0,1,0),0), tmp=new T.Vector3();
-  let viewW=60;
+  let viewW=60, camD=90;
+  const fit={asp:0,dist:120,pitch:1.0,cz:0};
+  function fitOverview(){
+    const asp=camera.aspect||1; fit.asp=asp; fit.pitch = asp>=1? 0.98 : 1.12;
+    const pts=[]; for(const x of [-HW,HW]) for(const z of [-HH,HH]) pts.push(new T.Vector3(x,0,z));
+    for(const x of [-HW+2,0,HW-2]) pts.push(new T.Vector3(x,11.5,-HH+2));   // roof signs on the far row
+    const p=new T.Vector3();
+    for(const cz of [2,4,6]){
+      for(let d=30; d<=900; d+=2){
+        camera.position.set(0,d*Math.sin(fit.pitch),cz+d*Math.cos(fit.pitch)); camera.lookAt(0,0,cz); camera.updateMatrixWorld(); camera.updateProjectionMatrix();
+        if(pts.every(q=>{p.copy(q).project(camera); return Math.abs(p.x)<=0.93 && Math.abs(p.y)<=0.92;})){ if(cz===2||d<fit.dist){ fit.dist=d; fit.cz=cz; } break; }
+      }
+    }
+  }
   function size(){ const r=stageEl.getBoundingClientRect(); if(!r.width||!r.height) return; renderer.setSize(r.width,r.height,false); camera.aspect=r.width/r.height; camera.updateProjectionMatrix(); }
   function animKid(k,x,y,moving,dt,mood){
     const [px,pz]=at(x,y); k.g.position.set(px,0,pz);
@@ -796,7 +891,7 @@ function init3D(){
     const P=G.player, now=performance.now()/1000;
     animKid(hero,P.x,P.y,P.moving,dt,"happy");
     const pt=G.patient;
-    if(pt!==pref){ if(pkid){ scene.remove(pkid.g); } pkid=null; pref=pt;
+    if(pt!==pref){ if(pkid){ scene.remove(pkid.g); pkid.g.traverse(o=>{ if(o.geometry) o.geometry.dispose(); if(o.material&&o.material!==sharedBlob) o.material.dispose(); }); } pkid=null; pref=pt;
       if(pt) pkid=makeKid({shirt:new T.Color(pt.shirt).getHex(),hair:new T.Color(pt.hair).getHex(),girl:pt.girl}); }
     if(pt&&pkid){ animKid(pkid,pt.x,pt.y,!!pt.moving&&pt.state==="follow",dt,pt.state==="happy"?"happy":"sad"); }
     markWait.visible=!!(pt&&pt.state==="wait"); markTalk.visible=!!(pt&&pt.state==="talk");
@@ -810,13 +905,21 @@ function init3D(){
     if(stationFx._flag&&!reduce){ stationFx._flag[0].rotation.y=Math.sin(now*2)*0.18; stationFx._flag[1].rotation.y=stationFx._flag[0].rotation.y; }
     // camera: show ~78 units wide on landscape, ~44 on portrait, follow the hero
     const asp=camera.aspect||1, fov=camera.fov*Math.PI/180;
-    viewW = asp>=1? 54 : 30;
-    const dist=Math.max(30,Math.min(110, viewW/(2*Math.tan(fov/2)*asp)));
-    const halfW=viewW/2, halfD=dist*Math.tan(fov/2)*1.1;
-    const tx=Math.max(-Math.max(0,HW-halfW+6),Math.min(Math.max(0,HW-halfW+6),hero.g.position.x));
-    const tz=Math.max(-Math.max(0,HH-halfD+4),Math.min(Math.max(0,HH-halfD+4),hero.g.position.z+2));
-    tmp.set(tx,0,tz); camT.lerp(tmp,1-Math.exp(-dt*5));
-    const pitch=0.8; camera.position.set(camT.x, dist*Math.sin(pitch), camT.z+dist*Math.cos(pitch)); camera.lookAt(camT);
+    let dist, pitch;
+    if(G.zoom!=="near"){
+      if(fit.asp!==asp){ fitOverview(); }
+      dist=fit.dist; pitch=fit.pitch; tmp.set(0,0,fit.cz);
+    } else {
+      pitch=0.8; viewW = asp>=1? 54 : 30;
+      dist=Math.max(30,Math.min(110, viewW/(2*Math.tan(fov/2)*asp)));
+      const halfW=viewW/2, halfD=dist*Math.tan(fov/2)*1.1;
+      const tx=Math.max(-Math.max(0,HW-halfW+6),Math.min(Math.max(0,HW-halfW+6),hero.g.position.x));
+      const tz=Math.max(-Math.max(0,HH-halfD+4),Math.min(Math.max(0,HH-halfD+4),hero.g.position.z+2));
+      tmp.set(tx,0,tz);
+    }
+    camT.lerp(tmp,1-Math.exp(-dt*5)); camD += (dist-camD)*(1-Math.exp(-dt*5));
+    camera.position.set(camT.x, camD*Math.sin(pitch), camT.z+camD*Math.cos(pitch)); camera.lookAt(camT);
+    if(dt>0.045){ slowN++; } slowT+=dt; if(slowT>2){ if(slowN>slowT*20*0.6 && pr>1){ pr=Math.max(1,pr-0.5); renderer.setPixelRatio(pr); size(); } slowT=0; slowN=0; }
     renderer.render(scene,camera);
     // off-screen pointer to the waiting friend
     if(pt&&pt.state==="wait"&&pkid){
@@ -839,9 +942,11 @@ try{ R3=init3D(); }catch(e){ R3=null; cv.style.display=""; }
 function resize(){
   const r=$("#stage").getBoundingClientRect(); view.dpr=Math.min(2,devicePixelRatio||1);
   view.w=r.width; view.h=r.height; cv.width=Math.round(r.width*view.dpr); cv.height=Math.round(r.height*view.dpr);
-  let s=Math.min(view.w/W,view.h/H); if(s<0.62) s=Math.min(0.8,Math.max(s,Math.min(view.w,view.h)/520)); view.s=s;
+  let s=Math.min(view.w/W,view.h/H); if(G.zoom==="near" && s<0.62) s=Math.min(0.8,Math.max(s,Math.min(view.w,view.h)/520)); view.s=s;
 }
 new ResizeObserver(resize).observe($("#stage")); resize();
+function setZoomLabel(){ $("#zoomBtn").innerHTML = G.zoom==="near" ? '全景 <span class="en">Map</span>' : '放大 <span class="en">Zoom</span>'; }
+$("#zoomBtn").addEventListener("click",()=>{ G.zoom = G.zoom==="near"?"all":"near"; saved.zoom=G.zoom; persist(); resize(); setZoomLabel(); });
 
 /* ---------- update ---------- */
 const SPEED=230;
@@ -962,11 +1067,12 @@ function draw(){
   }
 }
 let last=performance.now();
-function loop(t){ const dt=Math.min(.1,(t-last)/1000); last=t; update(dt);
+function loop(t){ const dt=Math.min(.1,Math.max(0,(t-last)/1000)); last=t; try{ update(dt); }catch(e){ console.error(e); }
   if(R3){ try{ R3.render(dt); }catch(e){ R3=null; document.querySelectorAll("canvas.gl").forEach(c=>c.remove()); cv.style.display=""; $("#ptr").hidden=true; } }
-  else draw();
+  else { try{ draw(); }catch(e){ console.error(e); } }
   requestAnimationFrame(loop); }
 requestAnimationFrame(loop);
+setZoomLabel();
 goTitle();
 </script>
 
