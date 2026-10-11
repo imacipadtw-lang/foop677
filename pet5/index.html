@@ -334,6 +334,9 @@ function todayStr(){var d=new Date();return d.getFullYear()+'/'+pad2(d.getMonth(
 function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
 function b64e(str){var bytes=new TextEncoder().encode(str);var bin='';for(var i=0;i<bytes.length;i++)bin+=String.fromCharCode(bytes[i]);return btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
 function b64d(s){s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';var bin=atob(s);var b=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)b[i]=bin.charCodeAt(i);return new TextDecoder().decode(b)}
+var IN_FRAME=(function(){try{return window.self!==window.top}catch(e){return true}})();
+var SITE_URL='https://imacipadtw-lang.github.io/foop677/pet5/';
+function twoStep(btn,label,fn){if(btn.dataset.arm==='1'){btn.dataset.arm='';btn.textContent=btn.dataset.orig;fn();return}btn.dataset.orig=btn.textContent;btn.dataset.arm='1';btn.textContent=label;setTimeout(function(){if(btn.dataset.arm==='1'){btn.dataset.arm='';btn.textContent=btn.dataset.orig}},4000)}
 var TIMERS=[];function later(fn,ms){var t=setTimeout(fn,ms);TIMERS.push(t);return t}
 function clearTimers(){TIMERS.forEach(clearTimeout);TIMERS=[]}
 
@@ -1246,7 +1249,7 @@ function makeCardImage(R){
  x.fillText('麻糬養成闖關 Pet Pal English',440,660);
  var finish=function(){var url;try{url=c.toDataURL('image/png')}catch(e){url=null}
   if(!url){toast('這台裝置無法產生圖片，請直接截圖完成卡。');return}
-  var o=openOv('<h2>完成卡圖片</h2><div class="sub">iPad：手指長按圖片 →「加入照片」或「儲存影像」。電腦：按「下載圖片」。</div><img class="imgout" alt="完成卡" src="'+url+'"><div class="row"><a class="btn purple" id="dl" download="完成卡-'+R.date.replace(/\//g,'')+'.png" href="'+url+'">下載圖片</a><button class="btn" id="imgBack">返回</button></div>');
+  var o=openOv('<h2>完成卡圖片</h2><div class="sub">iPad：手指長按圖片 →「加入照片」或「儲存影像」。電腦：按「下載圖片」。</div><img class="imgout" alt="完成卡" src="'+url+'"><div class="row">'+(IN_FRAME?'':'<a class="btn purple" id="dl" download="完成卡-'+R.date.replace(/\//g,'')+'.png" href="'+url+'">下載圖片</a>')+'<button class="btn" id="imgBack">返回</button></div>');
   $('#imgBack').onclick=function(){showResult(R)}};
  try{
   var defs=$('#artDefs').outerHTML;var svg=petSVG(ST.pet,'happy','').replace('<svg ','<svg xmlns="http://www.w3.org/2000/svg" width="360" height="405" ').replace(/(<svg[^>]*>)/,'$1'+defs);
@@ -1325,7 +1328,7 @@ function showTeacher(){
  '<div class="tsec"><textarea id="tText" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="教材內容">'+esc(cur)+'</textarea>'+
  '<div class="row" style="justify-content:flex-start"><button class="btn mint" id="tCheck">🔍 檢查教材</button><button class="btn primary" id="tApply">✔ 套用教材</button><button class="btn" id="tDefault">還原示範教材</button></div><div id="tRes"></div></div>'+
  '<div class="tsec"><h3>每次練習</h3><div class="inline"><label>每關題數 <select id="tN">'+[4,5,6,7,8,9,10,12,15].map(function(n){return '<option'+(n===MAT.n?' selected':'')+'>'+n+'</option>'}).join('')+'</select></label><label class="ck"><input type="checkbox" id="tAll"'+(MAT.all?' checked':'')+'> 全部關卡直接開放</label></div><div class="sub">建議 6～10 題，約 5～8 分鐘。答錯的題目會自動在同一關再練一次，並在之後的任務中複習。</div></div>'+
- '<div class="tsec"><h3>學生版輸出</h3><div class="sub">產生帶有目前教材與設定的連結，學生用 iPad 打開即可玩，不需登入；學生版不會顯示「老師設定」。</div><div class="inline" style="margin-top:8px"><input type="text" id="linkBox" readonly aria-label="學生版連結"><button class="btn purple" id="tCopy">複製連結</button><button class="btn" id="tDl">下載學生版檔案</button></div></div>'+
+ '<div class="tsec"><h3>學生版輸出</h3><div class="sub">產生帶有目前教材與設定的連結，學生用 iPad 打開即可玩，不需登入；學生版不會顯示「老師設定」。</div><div class="inline" style="margin-top:8px"><input type="text" id="linkBox" readonly aria-label="學生版連結"><button class="btn purple" id="tCopy">複製連結</button>'+(IN_FRAME?'':'<button class="btn" id="tDl">下載學生版檔案</button>')+'</div></div>'+
  '<div class="tsec"><h3>進度</h3><div class="inline"><button class="btn" id="tReset">重設本裝置的學生進度</button></div><div class="sub">只會清除這台裝置、這個瀏覽器中的遊戲進度。</div></div>'+
  (isDefault?'<div class="tsec"><h3>示範教材核對說明</h3>'+DEFAULT_NOTES.map(function(n){return '<div class="msg note">'+esc(n)+'</div>'}).join('')+'</div>':'')+
  '<div class="tsec"><h3>圖卡庫（pic= 後面填英文名稱）</h3><div class="picgrid">'+picLib+'</div></div>'+
@@ -1336,17 +1339,18 @@ function showTeacher(){
  $('#tCheck').onclick=function(){var r=checkReport($('#tText').value);$('#tRes').innerHTML=r.html};
  $('#tApply').onclick=function(){var t=$('#tText').value;var r=checkReport(t);$('#tRes').innerHTML=r.html;if(!r.ok){toast('教材還有錯誤，請依紅色提示修正後再套用。');return}
   var res=applyMaterial(t);if(!res.ok){toast('教材還有錯誤。');return}MAT.text=t;ST.mat={text:t,n:MAT.n,all:MAT.all};save();updLink();toast('教材已更新！題目、答案、圖卡和發音都已同步更新。');};
- $('#tDefault').onclick=function(){if(!confirm('要把教材還原成示範課文嗎？（目前文字框內容會被取代）'))return;$('#tText').value=DEFAULT_MATERIAL;$('#tRes').innerHTML=checkReport(DEFAULT_MATERIAL).html};
+ $('#tDefault').onclick=function(){twoStep(this,'再按一次：確定還原（會取代文字框內容）',function(){$('#tText').value=DEFAULT_MATERIAL;$('#tRes').innerHTML=checkReport(DEFAULT_MATERIAL).html})};
  $('#tN').onchange=function(){MAT.n=+this.value;ST.mat=ST.mat||{text:MAT.text};ST.mat.n=MAT.n;save();updLink()};
  $('#tAll').onchange=function(){MAT.all=this.checked;ST.mat=ST.mat||{text:MAT.text};ST.mat.all=MAT.all;save();updLink()};
  $('#tCopy').onclick=function(){var v=$('#linkBox').value;var ok=function(){toast('已複製學生版連結！貼到聯絡簿或班級群組給學生。')};
   if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(v).then(ok,function(){selCopy()});else selCopy();
   function selCopy(){var i=$('#linkBox');i.focus();i.select();i.setSelectionRange(0,99999);try{document.execCommand('copy');ok()}catch(e){toast('請長按連結框，手動複製。')}}};
- $('#tDl').onclick=downloadStudent;
- $('#tReset').onclick=function(){if(!confirm('確定要清除這台裝置的遊戲進度嗎？（寵物、能量、關卡紀錄都會重設）'))return;var keepMat=ST.mat;try{localStorage.removeItem(SKEY)}catch(e){}ST=freshState();ST.mat=keepMat;ST.tutorial=true;applyMaterial(MAT.text);save();drawRoom();drawPet();refreshTop();toast('進度已重設。');};
+ if($('#tDl'))$('#tDl').onclick=downloadStudent;
+ $('#tReset').onclick=function(){twoStep(this,'再按一次：確定清除進度',resetAll)};
+ function resetAll(){var keepMat=ST.mat;try{localStorage.removeItem(SKEY)}catch(e){}ST=freshState();ST.mat=keepMat;ST.tutorial=true;applyMaterial(MAT.text);save();drawRoom();drawPet();refreshTop();toast('進度已重設。');}
  $('#tClose').onclick=function(){closeOv();goHome()};
 }
-function studentLink(){var base=location.href.split('#')[0];return base+'#m='+b64e(MAT.text)+'&n='+MAT.n+(MAT.all?'&a=1':'')+'&s=1'}
+function studentLink(){var base=IN_FRAME?SITE_URL:location.href.split('#')[0];return base+'#m='+b64e(MAT.text)+'&n='+MAT.n+(MAT.all?'&a=1':'')+'&s=1'}
 function downloadStudent(){
  var url=location.href.split('#')[0];
  if(location.protocol==='file:'){toast('請在網站上使用「下載學生版檔案」，或改用「複製連結」。');return}
