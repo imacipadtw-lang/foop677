@@ -24,28 +24,28 @@
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{font-size:clamp(15px,calc(1.1vmin + 9px),21px)}
-html,body{margin:0;height:100%;overflow:hidden;overscroll-behavior:none}
+html,body{margin:0;height:100%;width:100%;max-width:100%;overflow:hidden;overscroll-behavior:none}
 body{font-family:var(--zh);color:var(--ink);background:#e9e4ff;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation;-webkit-text-size-adjust:100%}
 button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation;-webkit-appearance:none;appearance:none}
 .en{font-family:var(--en);letter-spacing:.01em}
 [hidden]{display:none!important}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 
-#app{position:fixed;left:0;top:0;width:100%;height:var(--vh);display:grid;grid-template-rows:auto minmax(0,1fr);
+#app{position:fixed;left:0;top:0;width:100%;max-width:100%;overflow:hidden;height:var(--vh);display:grid;grid-template-rows:auto minmax(0,1fr);
   background:radial-gradient(90% 70% at 0% 0%,#c8f5e8 0%,rgba(200,245,232,0) 60%),radial-gradient(80% 70% at 100% 100%,#ffe0d4 0%,rgba(255,224,212,0) 60%),linear-gradient(160deg,#e3f7f1 0%,#ebe6ff 55%,#fff0ea 100%)}
 
 /* ---------- top bar ---------- */
-#top{display:flex;align-items:center;gap:10px;padding:8px 12px;padding-top:max(8px,env(safe-area-inset-top));padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right))}
+#top{min-width:0;display:flex;align-items:center;gap:10px;padding:8px 12px;padding-top:max(8px,env(safe-area-inset-top));padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right))}
 .tb{min-width:48px;min-height:48px;border:0;border-radius:16px;background:#fff;box-shadow:0 4px 0 rgba(34,50,74,.16);display:inline-flex;align-items:center;justify-content:center;gap:4px;padding:0 10px;font-weight:700;font-size:.92rem;color:var(--ink)}
 .tb:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(34,50,74,.16)}
 .tb svg{width:24px;height:24px;flex:none}
 .tb.off{opacity:.55}
-#mission{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;background:rgba(255,255,255,.75);border-radius:16px;padding:5px 12px;min-height:48px;justify-content:center}
+#mission{flex:1 1 0;min-width:0;overflow:hidden;display:flex;flex-direction:column;gap:4px;background:rgba(255,255,255,.75);border-radius:16px;padding:5px 12px;min-height:48px;justify-content:center}
 #missionTitle{font-weight:700;font-size:1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #dots{display:flex;gap:4px;flex-wrap:nowrap;overflow:hidden}
 #dots i{display:block;height:8px;flex:1;max-width:28px;border-radius:5px;background:#d5dde4}
 #dots i.cur{background:var(--sun)}#dots i.ok{background:var(--mint)}#dots i.again{background:var(--coral)}
-#energy{display:flex;align-items:center;gap:6px;background:linear-gradient(180deg,#2b3a5c,#1f2a44);color:#fff;border-radius:16px;padding:0 14px 0 8px;min-height:48px;font-family:var(--en);font-weight:700;font-size:1.15rem;box-shadow:0 4px 0 #111a2e,0 0 0 2px rgba(54,240,208,.35) inset}
+#energy{flex:none;display:flex;align-items:center;gap:6px;background:linear-gradient(180deg,#2b3a5c,#1f2a44);color:#fff;border-radius:16px;padding:0 14px 0 8px;min-height:48px;font-family:var(--en);font-weight:700;font-size:1.15rem;box-shadow:0 4px 0 #111a2e,0 0 0 2px rgba(54,240,208,.35) inset}
 #energy svg{width:30px;height:30px}
 #energy.bump{animation:bump .5s}
 @keyframes bump{40%{transform:scale(1.18)}}
@@ -65,7 +65,7 @@ button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation;-webk
 #petTag b{color:var(--purple-d)}
 #growBar{width:70px;height:8px;border-radius:5px;background:#e3e8ee;overflow:hidden}
 #growBar i{display:block;height:100%;background:linear-gradient(90deg,#36f0d0,#7b68ee);width:0;transition:width .6s}
-#bubble{position:absolute;top:13%;z-index:6;width:max-content;max-width:86%;display:flex;align-items:center;gap:10px;background:#fff;border-radius:22px;padding:8px 14px 8px 8px;box-shadow:0 6px 0 rgba(34,50,74,.14),0 0 0 3px #22324a inset;transition:left .3s}
+#bubble{position:absolute;top:13%;z-index:6;width:max-content;max-width:86%;display:flex;align-items:center;gap:10px;background:#fff;border-radius:22px;padding:8px 14px 8px 8px;box-shadow:0 6px 0 rgba(34,50,74,.14),0 0 0 3px #22324a inset}
 #bubble::after{content:"";position:absolute;bottom:-12px;left:var(--tail,50%);width:22px;height:22px;background:#fff;transform:translateX(-50%) rotate(45deg);border-right:3px solid #22324a;border-bottom:3px solid #22324a;border-radius:0 0 6px 0}
 #bubble .say{width:56px;height:56px;border-radius:50%;border:0;background:linear-gradient(180deg,#5fe0bf,#25a88c);color:#fff;box-shadow:0 4px 0 #17806a;display:flex;align-items:center;justify-content:center;flex:none}
 #bubble .say svg{width:30px;height:30px}
@@ -139,7 +139,8 @@ button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation;-webk
 
 /* option rows */
 .opts{display:flex;flex-direction:column;gap:12px;justify-content:center;height:100%}
-.orow{display:flex;gap:10px;align-items:stretch}
+.orow{display:flex;gap:10px;align-items:stretch;min-width:0}
+.opt{min-width:0;overflow-wrap:anywhere}
 .opt{flex:1;min-height:60px;border:0;border-radius:20px;background:#fff;box-shadow:0 5px 0 rgba(34,50,74,.16),0 0 0 3px #e3eaef inset;text-align:left;padding:10px 54px 10px 18px;font-family:var(--en);font-weight:600;font-size:1.25rem;line-height:1.25;position:relative;color:var(--ink)}
 .opt:active:not(:disabled){transform:translateY(3px)}
 .opt.no{animation:shake .4s;opacity:.4;text-decoration:line-through}
@@ -213,9 +214,10 @@ button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation;-webk
 #rotate .ipad::after{content:"";position:absolute;left:50%;bottom:6px;width:10px;height:10px;border-radius:50%;background:#fff;transform:translateX(-50%)}
 @keyframes rot{0%,25%{transform:rotate(0)}60%,100%{transform:rotate(-90deg)}}
 #rotate b{font-size:1.5rem}
-@media (orientation:portrait){body:not(.allow-portrait) #rotate{display:flex}}
+@media (orientation:portrait) and (min-width:600px){body:not(.allow-portrait) #rotate{display:flex}}
 body.allow-portrait #main{grid-template-columns:1fr;grid-template-rows:minmax(0,40fr) minmax(0,60fr)}
 @media (orientation:portrait){body.allow-portrait .tblabel{display:none}}
+body.allow-portrait #main{gap:10px}
 #toast{position:fixed;left:50%;top:max(76px,calc(env(safe-area-inset-top) + 70px));transform:translateX(-50%);z-index:95;background:#22324a;color:#fff;border-radius:16px;padding:12px 18px;font-weight:700;max-width:min(92vw,620px);box-shadow:0 8px 24px rgba(0,0,0,.25);text-align:center;line-height:1.4}
 .tut{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:10px}
 .tut .st{background:#fff;border-radius:22px;padding:12px;box-shadow:0 0 0 3px #e9eef2 inset;text-align:center;font-weight:700;line-height:1.4;font-size:.95rem}
@@ -253,6 +255,95 @@ label.ck{display:inline-flex;align-items:center;gap:8px;min-height:48px}
 label.ck input{width:26px;height:26px}
 #linkBox{flex:1;min-width:240px}
 .imgout{max-width:100%;border-radius:16px;box-shadow:0 6px 20px rgba(0,0,0,.2);-webkit-touch-callout:default;-webkit-user-select:auto;user-select:auto}
+
+/* ---------- phones: portrait = stacked; short landscape = compact ---------- */
+@media (orientation:portrait) and (max-width:599px){
+ #main{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,26fr) minmax(0,74fr);gap:8px}
+ .tok{font-size:1.1rem;padding:0 10px}
+ .zone{min-height:58px}
+ #petWrap{height:66%}#petWrap.withNpc{height:60%}#npcWrap{height:58%}
+ #bubble{top:6%}
+}
+@media (max-width:599px),(max-height:500px){
+ html{font-size:17px}
+ #top{gap:6px;padding:6px 8px;padding-top:max(6px,env(safe-area-inset-top));padding-left:max(8px,env(safe-area-inset-left));padding-right:max(8px,env(safe-area-inset-right))}
+ #bSpeed,#bSub,#bMusic,#bFull{display:none}
+ .tblabel{display:none}
+ #mission{padding:4px 10px;border-radius:14px}
+ #missionTitle{font-size:.92rem}
+ #energy{padding:0 10px 0 6px;font-size:1rem;border-radius:14px}#energy svg{width:24px;height:24px}
+ #main{padding:0 8px 8px;padding-bottom:max(8px,env(safe-area-inset-bottom));padding-left:max(8px,env(safe-area-inset-left));padding-right:max(8px,env(safe-area-inset-right));gap:8px}
+ #panel{padding:10px;border-radius:20px}
+ #stage{border-radius:20px}
+ .pv{gap:8px}
+ .ph{min-height:34px;gap:6px;flex-wrap:wrap}
+ .chip-type{padding:4px 10px;font-size:.88rem;border-radius:11px}
+ .ph .ins{display:none}
+ .pbody{overflow-y:auto;-webkit-overflow-scrolling:touch}
+ .pv.csolved .pbody{display:none}
+ .cards{gap:10px}
+ .card{border-radius:18px}
+ .opts{gap:8px}
+ .orow{gap:8px}
+ .opt{min-height:52px;font-size:1.12rem;padding:8px 44px 8px 12px;border-radius:16px}
+ .lis{width:50px;min-height:50px;border-radius:15px}
+ .situ{padding:8px 12px;font-size:.95rem;border-radius:16px}.situ svg{width:26px;height:26px}
+ .sbody{gap:8px}
+ .build{gap:8px}
+ .zone{min-height:62px;padding:8px;gap:8px;border-radius:16px}
+ .tok{min-height:48px;font-size:1.1rem;padding:0 12px;border-radius:14px}
+ .zh-hint{font-size:.88rem}
+ .btn{min-height:48px;padding:0 12px;font-size:.92rem;border-radius:16px;gap:6px}
+ .btn svg{width:22px;height:22px}
+ .btn.big{min-height:54px;font-size:1rem;padding:0 16px;border-radius:18px}
+ .pf{gap:8px;min-height:48px}
+ #fb{padding:8px 10px;gap:8px;border-radius:16px}#fb .ico{width:32px;height:32px}#fb .fben{font-size:1rem}#fb .fbzh{font-size:.85rem}
+ #bubble{padding:5px 10px 5px 5px;border-radius:18px;gap:8px;max-width:92%}
+ #bubble .say{width:48px;height:48px}#bubble .say svg{width:26px;height:26px}
+ #subText{font-size:1rem}
+ #petTag{top:8px;left:8px;padding:4px 8px;font-size:.75rem;border-radius:11px}
+ #growBar{width:48px}
+ #npcName{font-size:.75rem;padding:1px 8px}
+ .home{gap:8px}.hello{font-size:1.08rem}.sub{font-size:.88rem}
+ .grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+ .tile{min-height:60px;font-size:.92rem;border-radius:18px;padding:8px}.tile svg{width:34px;height:34px}.tile small{font-size:.72rem}
+ .shopgrid{grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px}
+ .item{min-height:118px;border-radius:18px;padding:8px}.item svg{width:54px;height:54px}.item b{font-size:.85rem}.item .state{font-size:.72rem;text-align:center}
+ .lvcard{min-height:62px;padding:8px 10px;border-radius:18px}.lvcard .num{width:44px;height:44px;font-size:1.15rem}
+ .ov{padding:10px;padding-top:max(10px,env(safe-area-inset-top));padding-bottom:max(10px,env(safe-area-inset-bottom))}
+ .dlg{padding:16px;border-radius:22px}.dlg h2{font-size:1.18rem}
+ .ovgrid{grid-template-columns:92px minmax(0,1fr)!important;gap:12px!important}
+ .done-card{grid-template-columns:92px minmax(0,1fr);padding:12px;gap:10px;border-radius:20px}
+ .done-card svg.pet{width:92px;height:104px}.done-card h3{font-size:1.15rem}.done-card .big{font-size:.95rem;margin-top:3px}
+ .done-card .stars{font-size:1.4rem!important}
+ .resgrid{grid-template-columns:minmax(0,1fr)!important}
+ .tut{gap:8px}.tut .st{padding:8px;font-size:.8rem;border-radius:16px}.tut .st svg{max-height:84px}
+ .setrow .btn{flex:1 1 40%}
+ #rotate b{font-size:1.2rem}
+}
+@media (max-height:500px) and (orientation:landscape){
+ html{font-size:16px}
+ #petTag{display:none}
+ #main{grid-template-columns:minmax(0,28fr) minmax(0,72fr)}
+ #top{padding-top:max(4px,env(safe-area-inset-top));padding-bottom:4px}
+ .opts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;align-content:center}
+ .orow{gap:6px}
+ .opt{padding:6px 24px 6px 8px;font-size:.95rem;min-height:56px}
+ .opt .mark{width:22px;height:22px;right:3px;top:3px;font-size:.75rem}
+ .situ{font-size:.85rem;padding:6px 10px;line-height:1.35}
+ .tok{font-size:.98rem;padding:0 9px}
+ .zone{min-height:56px;padding:6px;gap:6px}
+ .build{gap:6px}
+ .zh-hint{font-size:.8rem}
+ #bubble{top:4%}
+ #petWrap{height:64%}#petWrap.withNpc{height:50%;left:70%}#npcWrap{height:48%;left:26%}
+}
+.zh-hint:empty{display:none}
+@media (max-height:360px) and (orientation:landscape){html{font-size:15px}#top{padding-bottom:2px}#main{gap:6px}.situ{font-size:.8rem;padding:4px 8px}.situ svg{display:none}.opt{min-height:50px;font-size:.9rem}.sbody,.pv{gap:6px}.tok{font-size:.95rem;padding:0 8px}.zone{min-height:52px;padding:4px;gap:5px}#panel{padding:8px}}
+@media (orientation:portrait) and (max-width:599px) and (max-height:600px){html{font-size:15px}#main{grid-template-rows:minmax(0,22fr) minmax(0,78fr)}}
+@media (orientation:portrait) and (max-width:599px) and (min-height:740px){#main{grid-template-rows:minmax(0,30fr) minmax(0,70fr)}}
+@media (orientation:portrait) and (max-width:599px) and (min-height:640px){.opt{font-size:1.25rem;min-height:58px}.lis{min-height:58px;width:56px}.situ{font-size:1.02rem}.sbody .opt{min-height:50px;font-size:1.15rem;padding-top:6px;padding-bottom:6px}.sbody .lis{min-height:50px}.sbody,.sbody .opts{gap:7px}.tok{font-size:1.2rem}.btn{font-size:1rem}}
+@media (max-height:500px) and (min-height:361px) and (orientation:landscape){.opt{font-size:1.05rem}}
 @supports not (aspect-ratio:1){#petWrap{width:46%}#petWrap.withNpc{width:40%}#npcWrap{width:34%}}
 @media (max-height:620px){html{font-size:15px}.btn.big{min-height:56px}#petTag{display:none}}
 @media (max-width:820px) and (orientation:landscape){.tblabel{display:none}}
@@ -797,13 +888,15 @@ var SFX={
 };
 
 /* ---------------- layout ---------------- */
+var mqCompact=window.matchMedia?window.matchMedia('(max-width:599px),(max-height:500px)'):null;
+function isCompact(){return !!(mqCompact&&mqCompact.matches)}
 function setVH(){var h=window.innerHeight;if(window.visualViewport&&Math.abs(window.visualViewport.height-h)<200)h=window.visualViewport.height;document.documentElement.style.setProperty('--vh',h+'px');fitCards()}
-function fitCards(){var b=$('.cards');if(!b)return;var w=b.clientWidth,h=b.clientHeight;var n=b.children.length||3;var s=Math.floor(Math.min((w-14*(n-1))/n,h-10,280));document.documentElement.style.setProperty('--card',Math.max(90,s)+'px')}
+function fitCards(){var b=$('.cards');if(!b)return;var w=b.clientWidth,h=b.clientHeight;var n=b.children.length||3;var s=Math.floor(Math.min((w-14*(n-1))/n,h-10,280));document.documentElement.style.setProperty('--card',Math.max(isCompact()?64:90,s)+'px')}
 window.addEventListener('resize',setVH);
 window.addEventListener('orientationchange',function(){setTimeout(setVH,250)});
 if(window.visualViewport)window.visualViewport.addEventListener('resize',setVH);
 var mqPortrait=window.matchMedia?window.matchMedia('(orientation: portrait)'):null;
-function onOrient(){if(mqPortrait&&mqPortrait.matches&&!document.body.classList.contains('allow-portrait'))stopSpeech();setTimeout(setVH,60)}
+function onOrient(){setTimeout(function(){var r=$('#rotate');if(r&&getComputedStyle(r).display!=='none')stopSpeech();setVH()},60)}
 if(mqPortrait){if(mqPortrait.addEventListener)mqPortrait.addEventListener('change',onOrient);else if(mqPortrait.addListener)mqPortrait.addListener(onOrient)}
 document.addEventListener('visibilitychange',function(){if(document.hidden){stopSpeech();if(SND.ctx&&SND.on)SND.mus.gain.setTargetAtTime(0,SND.ctx.currentTime,.05)}else if(SND.on&&SND.ctx){SND.ctx.resume();duck(false)}});
 
@@ -820,7 +913,7 @@ function refreshTop(){
  $('#bSpeed').setAttribute('aria-label','語速：'+RATES[ST.set.rate].n);
  $('#bSub').innerHTML=UI.sub+'<span class="tblabel">字幕'+(ST.set.subs?'開':'關')+'</span>';$('#bSub').classList.toggle('off',!ST.set.subs);
  $('#bMusic').innerHTML=UI.music+'<span class="tblabel">音樂'+(ST.set.music?'開':'關')+'</span>';$('#bMusic').classList.toggle('off',!ST.set.music);
- $('#bPause').innerHTML=UI.pause+'<span class="tblabel">暫停</span>';
+ $('#bPause').innerHTML=UI.pause+'<span class="tblabel">暫停</span>';$('#bPause').setAttribute('aria-label','暫停與設定');
  $('#bFull').innerHTML=UI.full;
  $('#eIco').innerHTML=UI.bolt;$('#eNum').textContent=ST.energy;
 }
@@ -991,7 +1084,7 @@ function showTutorial(first){
 }
 function showSplash(){
  var sess=PROG.sess&&validSess(PROG.sess);
- var h='<div style="display:grid;grid-template-columns:minmax(0,200px) 1fr;gap:18px;align-items:center"><div>'+petSVG(ST.pet,'happy','')+'</div><div><h2>麻糬養成闖關</h2><div class="sub" style="font-size:1.05rem">五年級英語課文 · 聽英文、完成任務，讓麻糬長大！</div>'+(saveOK?'':'<div class="msg warn">這台裝置目前無法儲存進度，關閉網頁後進度會消失。</div>')+'<div class="row" style="justify-content:flex-start"><button class="btn primary big" id="spGo">'+UI.next+' 開始</button></div></div></div>';
+ var h='<div class="ovgrid" style="display:grid;grid-template-columns:minmax(0,200px) 1fr;gap:18px;align-items:center"><div>'+petSVG(ST.pet,'happy','')+'</div><div><h2>麻糬養成闖關</h2><div class="sub" style="font-size:1.05rem">五年級英語課文 · 聽英文、完成任務，讓麻糬長大！</div>'+(saveOK?'':'<div class="msg warn">這台裝置目前無法儲存進度，關閉網頁後進度會消失。</div>')+'<div class="row" style="justify-content:flex-start"><button class="btn primary big" id="spGo">'+UI.next+' 開始</button></div></div></div>';
  openOv(h);
  $('#spGo').onclick=function(){unlockAudio();closeOv();goHome()};
 }
@@ -1011,7 +1104,7 @@ function levelIntro(i){
  var L=BANK.levels[i],n=Math.min(MAT.n,L.items.length);
  var stories=['麻糬想跟大家一起出門冒險！','麻糬在學校遇到新朋友，要用英文聊天！','麻糬想跟著大家去看練球！'];
  var story=L.review?'把學過的句子全部用上，挑戰最強的麻糬！':(stories[i]||'麻糬要用英文完成新的任務！');
- var h='<div style="display:grid;grid-template-columns:minmax(0,180px) 1fr;gap:18px;align-items:center"><div>'+petSVG(ST.pet,'happy','')+'</div><div><h2>'+esc(L.title)+'</h2><div class="sub" style="font-size:1.05rem">'+story+'</div><div class="msg note" style="margin-top:10px">🎯 任務目標：完成 '+n+' 個英文任務，收集 ⚡ 能量讓麻糬長大！'+(PROG.review.length?'<br>🔁 會加入上次答錯的句子再練一次。':'')+'</div><div class="row" style="justify-content:flex-start"><button class="btn primary big" id="liGo">'+UI.next+' 出發！</button><button class="btn" id="liNo">等一下</button></div></div></div>';
+ var h='<div class="ovgrid" style="display:grid;grid-template-columns:minmax(0,180px) 1fr;gap:18px;align-items:center"><div>'+petSVG(ST.pet,'happy','')+'</div><div><h2>'+esc(L.title)+'</h2><div class="sub" style="font-size:1.05rem">'+story+'</div><div class="msg note" style="margin-top:10px">🎯 任務目標：完成 '+n+' 個英文任務，收集 ⚡ 能量讓麻糬長大！'+(PROG.review.length?'<br>🔁 會加入上次答錯的句子再練一次。':'')+'</div><div class="row" style="justify-content:flex-start"><button class="btn primary big" id="liGo">'+UI.next+' 出發！</button><button class="btn" id="liNo">等一下</button></div></div></div>';
  openOv(h);
  $('#liGo').onclick=function(){unlockAudio();closeOv();startSession(i)};
  $('#liNo').onclick=function(){closeOv()};
@@ -1187,6 +1280,7 @@ function onCorrect(el){
  else{petAct('happy',it.type==='build'?'jump':'wave',1600);sparkle(null,7);if(it.type!=='pic')npcHappy()}
  later(function(){speak(speakAns,{sid:'main',who:it.type==='reply'?'pet':'pet',audio:ansLine.audio&&speakAns===ansLine.en?ansLine.audio:null})},500);
  later(function(){busy=false},350);
+ later(function(){var pv=$('#panel .pv');if(pv&&isCompact())pv.classList.add('csolved')},780);
  save();
 }
 function nextQ(){if(!S)return;SFX.tap();S.idx++;save();renderQ()}
@@ -1226,7 +1320,7 @@ function showResult(R){
  var li=function(id){var t=itemText(id),it=BANK.items[id];var say=t.say||t.en;return '<li><button class="lis" data-say="'+esc(say)+'" data-sid="res'+id+'" aria-label="播放">'+UI.spk+'</button><span class="rt"><span class="en">'+esc(t.en)+'</span><br><span class="zh">'+TYPE_NAME[it.type]+(t.zh?' · '+esc(t.zh):'')+'</span></span></li>'};
  var nextI=nextLevelIndex();var hasNext=R.lvl>=0&&nextI!==R.lvl&&lvUnlocked(nextI)&&!(PROG.lv[nextI]&&PROG.lv[nextI].done);
  var h='<div id="doneCard" class="done-card"><div>'+petSVG(ST.pet,'happy','')+'</div><div><h3>🎉 今日任務完成！</h3><div class="sub">'+esc(R.date)+' · '+esc(R.title)+'</div><div class="stars" style="font-size:2rem">'+'★★★'.slice(0,R.stars)+'☆☆☆'.slice(0,3-R.stars)+'</div><div class="big">首次就答對：'+R.fc+' / '+R.n+' 題</div>'+(R.r?'<div class="big">複習題首次答對：'+R.rc+' / '+R.r+' 題</div>':'')+'<div class="big">獲得能量：⚡ '+R.gained+'</div><div class="sub">麻糬目前：Lv'+stageOf(ST.pet.xp)+' '+STAGES[stageOf(ST.pet.xp)].name+'</div></div></div>';
- h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px"><div><b>✅ 第一次就答對</b><ul class="lst">'+(R.oks.length?R.oks.map(li).join(''):'<li>下次一定可以！</li>')+'</ul></div><div><b>🔁 需要複習</b><ul class="lst">'+(R.needs.length?R.needs.map(li).join(''):'<li>全部第一次就答對，太厲害了！</li>')+'</ul>'+(R.needs.length?'<div class="sub">這些句子會在下一次任務中再出現。</div>':'')+'</div></div>';
+ h+='<div class="resgrid" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;margin-top:12px"><div><b>✅ 第一次就答對</b><ul class="lst">'+(R.oks.length?R.oks.map(li).join(''):'<li>下次一定可以！</li>')+'</ul></div><div><b>🔁 需要複習</b><ul class="lst">'+(R.needs.length?R.needs.map(li).join(''):'<li>全部第一次就答對，太厲害了！</li>')+'</ul>'+(R.needs.length?'<div class="sub">這些句子會在下一次任務中再出現。</div>':'')+'</div></div>';
  h+='<div class="row"><button class="btn purple" id="rImg">📷 存成圖片</button>'+(hasNext?'<button class="btn primary" id="rNext">'+UI.next+' 下一關</button>':'')+'<button class="btn mint" id="rFeed">'+tileIco('feed').replace('<svg','<svg width="28" height="28"')+' 去餵麻糬</button><button class="btn" id="rHome">'+UI.home+' 回小屋</button></div><div class="sub" style="text-align:center;margin-top:8px">也可以直接截圖這張完成卡給老師看。</div>';
  openOv(h);bindSay(OV);
  $('#rHome').onclick=function(){closeOv();goHome()};
@@ -1262,8 +1356,13 @@ function roundRect(x,a,b,w,h,r){x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,
 /* ---------------- pause ---------------- */
 function showPause(){
  stopSpeech();if(SND.ctx&&SND.on)SND.mus.gain.setTargetAtTime(0,SND.ctx.currentTime,.05);
- var h='<h2>⏸ 暫停中</h2><div class="sub">休息一下！進度都已經存好了。</div><div class="row"><button class="btn primary big" id="pGo">'+UI.next+' 繼續</button><button class="btn" id="pHome">'+UI.home+' 回小屋</button><button class="btn" id="pHelp">'+tileIco('help').replace('<svg','<svg width="28" height="28"')+' 怎麼玩</button></div>'+(document.fullscreenElement||document.webkitFullscreenElement?'<div class="row"><button class="btn" id="pExitFull">離開全螢幕</button></div>':'');
+ var h='<h2>⏸ 暫停中</h2><div class="sub">休息一下！進度都已經存好了。</div><div class="row setrow"><button class="btn" id="psSpeed"></button><button class="btn" id="psSub"></button><button class="btn" id="psMusic"></button><button class="btn" id="psFull">'+UI.full+' 全螢幕</button></div><div class="row"><button class="btn primary big" id="pGo">'+UI.next+' 繼續</button><button class="btn" id="pHome">'+UI.home+' 回小屋</button><button class="btn" id="pHelp">'+tileIco('help').replace('<svg','<svg width="28" height="28"')+' 怎麼玩</button></div>'+(document.fullscreenElement||document.webkitFullscreenElement?'<div class="row"><button class="btn" id="pExitFull">離開全螢幕</button></div>':'');
  openOv(h);
+ var psl=function(){$('#psSpeed').innerHTML=UI.speed+' 語速：'+RATES[ST.set.rate].n;$('#psSub').innerHTML=UI.sub+' 英文字幕：'+(ST.set.subs?'開':'關');$('#psMusic').innerHTML=UI.music+' 音樂：'+(ST.set.music?'開':'關')};psl();
+ $('#psSpeed').onclick=function(){ST.set.rate=(ST.set.rate+1)%RATES.length;save();refreshTop();psl()};
+ $('#psSub').onclick=function(){ST.set.subs=!ST.set.subs;save();refreshTop();showSub();psl()};
+ $('#psMusic').onclick=function(){ST.set.music=!ST.set.music;save();refreshTop();if(ST.set.music){unlockAudio();startMusic();if(SND.ctx)SND.mus.gain.setTargetAtTime(0,SND.ctx.currentTime,.05)}else stopMusic();psl()};
+ $('#psFull').onclick=function(){closeOv();toggleFull()};
  $('#pGo').onclick=function(){closeOv();if(SND.on)duck(false);if(SCREEN==='quiz'&&Q&&!Q.solved&&Q.it.type!=='situ')later(playMain,300)};
  $('#pHome').onclick=function(){closeOv();if(SND.on)duck(false);goHome()};
  $('#pHelp').onclick=function(){showTutorial(false)};
