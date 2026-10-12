@@ -6,6 +6,7 @@
 |---|---|---|
 | 第3關 | No. 46–66 身體部位與狀態 | [健康小隊長 Health Hero](level03/) |
 | 五年級 | 單元課文（Sunday、science / art / PE class、ice hockey） | [麻糬養成闖關 Pet Pal English](pet5/) |
+| 五年級 | 單元課文（Where are you from? / museum / boat / How do you go to school?） | [麻糬去旅行 Pet Pal Trip](pet5u2/) |
 
 ## 第3關 玩法
 1. 走到頭上有「!」的同學旁邊，聽他用英文說哪裡不舒服（預設無字幕）。
@@ -33,3 +34,8 @@
 - 發音：教材有 `audio=` 錄音檔時優先播放，否則使用裝置內建英語語音（只朗讀英文）。
 - 老師設定（首頁 →「老師設定」）：可貼入／修改教材、檢查格式、預覽題目、調整題數、複製學生版連結或下載學生版檔案、重設進度。
 - 示範教材核對說明：原文撇號統一為「'」；「Does she have science class on Monday?」未交代 she 是誰，改用「星期一＋自然課」圖卡出題；課文開頭是 Sunday，後面卻問 PE class today，遊戲不出需要判斷星期幾的題目。
+
+## 五年級 麻糬去旅行（pet5u2/）
+- 網址：https://imacipadtw-lang.github.io/foop677/pet5u2/
+- 與 pet5 相同玩法與老師設定，進度分開儲存。
+- 教材核對：原文「He is ...」句子不完整，未出題；原文未標說話者，暫以中文角色標示；「I go to school on foot. He goes to school by car.」拆成兩句練習 on foot / by car。

@@ -126,6 +126,7 @@ button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation;-webk
 
 /* picture cards */
 .cards{display:flex;gap:14px;justify-content:center;align-items:center;height:100%}
+.cards.two{flex-wrap:wrap;align-content:center}
 .card{width:var(--card);height:var(--card);flex:none;border:0;border-radius:26px;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 35% 25%,#ffffff 0%,#f4f7fb 60%,#e3ebf2 100%);box-shadow:0 6px 0 rgba(34,50,74,.16),0 0 0 3px #e3eaef inset;padding:0;position:relative;transition:transform .15s}
 .card svg{width:calc(var(--card)*.88);height:calc(var(--card)*.88);display:block;flex:none}
 .card:active:not(:disabled){transform:translateY(3px) scale(.98)}
@@ -140,6 +141,7 @@ button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation;-webk
 /* option rows */
 .opts{display:flex;flex-direction:column;gap:12px;justify-content:center;height:100%}
 .orow{display:flex;gap:10px;align-items:stretch;min-width:0}
+.orow.gone{display:none}
 .opt{min-width:0;overflow-wrap:anywhere}
 .opt{flex:1;min-height:60px;border:0;border-radius:20px;background:#fff;box-shadow:0 5px 0 rgba(34,50,74,.16),0 0 0 3px #e3eaef inset;text-align:left;padding:10px 54px 10px 18px;font-family:var(--en);font-weight:600;font-size:1.25rem;line-height:1.25;position:relative;color:var(--ink)}
 .opt:active:not(:disabled){transform:translateY(3px)}
@@ -340,7 +342,7 @@ label.ck input{width:26px;height:26px}
 }
 .zh-hint:empty{display:none}
 @media (max-height:360px) and (orientation:landscape){html{font-size:15px}#top{padding-bottom:2px}#main{gap:6px}.situ{font-size:.8rem;padding:4px 8px}.situ svg{display:none}.opt{min-height:50px;font-size:.9rem}.sbody,.pv{gap:6px}.tok{font-size:.95rem;padding:0 8px}.zone{min-height:52px;padding:4px;gap:5px}#panel{padding:8px}}
-@media (orientation:portrait) and (max-width:599px) and (max-height:600px){html{font-size:15px}#main{grid-template-rows:minmax(0,22fr) minmax(0,78fr)}}
+@media (orientation:portrait) and (max-width:599px) and (max-height:600px){html{font-size:15px}#main{grid-template-rows:minmax(0,22fr) minmax(0,78fr)}.situ{font-size:.88rem;padding:6px 10px}.situ svg{display:none}.sbody,.sbody .opts{gap:6px}.sbody .opt{min-height:48px}.sbody .lis{min-height:48px}#fb{padding:6px 8px}#fb .fbt{font-size:.9rem}}
 @media (orientation:portrait) and (max-width:599px) and (min-height:740px){#main{grid-template-rows:minmax(0,30fr) minmax(0,70fr)}}
 @media (orientation:portrait) and (max-width:599px) and (min-height:640px){.opt{font-size:1.25rem;min-height:58px}.lis{min-height:58px;width:56px}.situ{font-size:1.02rem}.sbody .opt{min-height:50px;font-size:1.15rem;padding-top:6px;padding-bottom:6px}.sbody .lis{min-height:50px}.sbody,.sbody .opts{gap:7px}.tok{font-size:1.2rem}.btn{font-size:1rem}}
 @media (max-height:500px) and (min-height:361px) and (orientation:landscape){.opt{font-size:1.05rem}}
@@ -717,7 +719,7 @@ function parseMaterial(raw){
   L.level=levels.length-1;cur.lines.push(L);lines.push(L);
  });
  /* wrong options should come from the material */
- var allEn={};lines.forEach(function(L){allEn[L.en]=1});
+ var allEn={};lines.forEach(function(L){allEn[L.en]=1;splitSentences(L.en).forEach(function(x){allEn[x]=1})});
  lines.forEach(function(L){L.wrong.forEach(function(w){if(!allEn[w])warnings.push({ln:L.ln,msg:'錯誤選項「'+w+'」不在教材句子中，請確認是學生學過的英文。'})})});
  /* duplicate sentences */
  var seen={};lines.forEach(function(L){if(seen[L.en]&&seen[L.en]!==L.speaker+'|'+L.level)warnings.push({ln:L.ln,msg:'「'+L.en+'」在教材中出現不只一次，題目會自動避免重複。'});seen[L.en]=L.speaker+'|'+L.level});
@@ -891,7 +893,7 @@ var SFX={
 var mqCompact=window.matchMedia?window.matchMedia('(max-width:599px),(max-height:500px)'):null;
 function isCompact(){return !!(mqCompact&&mqCompact.matches)}
 function setVH(){var h=window.innerHeight;if(window.visualViewport&&Math.abs(window.visualViewport.height-h)<200)h=window.visualViewport.height;document.documentElement.style.setProperty('--vh',h+'px');fitCards()}
-function fitCards(){var b=$('.cards');if(!b)return;var w=b.clientWidth,h=b.clientHeight;var n=b.children.length||3;var s=Math.floor(Math.min((w-14*(n-1))/n,h-10,280));document.documentElement.style.setProperty('--card',Math.max(isCompact()?64:90,s)+'px')}
+function fitCards(){var b=$('.cards');if(!b)return;var w=b.clientWidth,h=b.clientHeight;var n=b.children.length||3;var g=parseFloat(getComputedStyle(b).columnGap)||14;var s1=Math.min((w-g*(n-1))/n,h-10);var c2=Math.ceil(n/2),s2=Math.min((w-g*(c2-1))/c2-2,(h-g)/2-6);var two=s2>s1*1.15;b.classList.toggle('two',two);var s=Math.floor(Math.min(two?s2:s1,280));document.documentElement.style.setProperty('--card',Math.max(isCompact()?64:90,s)+'px')}
 window.addEventListener('resize',setVH);
 window.addEventListener('orientationchange',function(){setTimeout(setVH,250)});
 if(window.visualViewport)window.visualViewport.addEventListener('resize',setVH);
@@ -1218,7 +1220,7 @@ function checkBuild(){
 function answerChoice(i,el){
  if(!Q||Q.solved||busy)return;var o=Q.opts[i];if(!o||el.disabled)return;
  if(o.ok){el.classList.add('yes');el.insertAdjacentHTML('beforeend','<span class="mark m-ok">✓</span>');onCorrect(el)}
- else{el.classList.add('no');el.disabled=true;el.insertAdjacentHTML('beforeend','<span class="mark m-no">✗</span>');onWrong(el)}
+ else{el.classList.add('no');el.disabled=true;el.insertAdjacentHTML('beforeend','<span class="mark m-no">✗</span>');onWrong(el);var row=el.closest('.orow');if(row&&isCompact()&&window.innerHeight<620)later(function(){if(row.isConnected)row.classList.add('gone')},420)}
 }
 function doHint(){
  if(!Q||Q.solved)return;SFX.tap();Q.hint++;var it=Q.it;
