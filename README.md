@@ -39,3 +39,10 @@
 - 網址：https://imacipadtw-lang.github.io/foop677/pet5u2/
 - 與 pet5 相同玩法與老師設定，進度分開儲存。
 - 教材核對：原文「He is ...」句子不完整，未出題；原文未標說話者，暫以中文角色標示；「I go to school on foot. He goes to school by car.」拆成兩句練習 on foot / by car。
+
+## 語音（pet5、pet5u2 共用做法）
+- 每句英文都用開源 Kokoro 神經語音模型預先錄好（真人感語音，不是裝置的機器人聲），以 MP3 嵌在 index.html 內，離線也能播。
+- 角色配不同聲音：男孩（Teddy、Edison、Rocky）、女孩（Amber、Girl、Mia）；每句有慢、中、正常三種語速。
+- 老師用「老師設定」加入新句子時，沒有預錄的句子會自動改用裝置語音；要補錄可依 tts/gen.py 的流程重新產生。
+- 寵物體型隨成長值連續變大（25 cm → 70 cm），不只換裝。
+- 新題型「聽對話，解問題」：聽完一問一答，依中文問題選出答案圖卡（素養導向的理解題）。
