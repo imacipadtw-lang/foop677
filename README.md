@@ -27,7 +27,8 @@
 - 本專案僅供教學、非商業使用。
 
 ## 五年級 麻糬養成闖關（pet5/）
-- 網址：https://imacipadtw-lang.github.io/foop677/pet5/
+- 網址（teachers 站，已開 Pages，密碼 0686）：https://imacipadtw-lang.github.io/teachers/workbook/pet5/
+- 本倉庫的 GitHub Pages 尚未開啟；開啟後也可用 https://imacipadtw-lang.github.io/foop677/pet5/
 - 玩法：聽英文選圖卡、排句子（點選或拖曳）、選回應、情境對話；答對得到能量，餵寵物「麻糬」長大、布置小屋、換造型。
 - 以 iPad 橫式為主；直式會提示把 iPad 橫過來（也可選擇先用直式玩）。
 - 進度只存在各自裝置的瀏覽器（localStorage）；無法儲存時會提示，遊戲仍可進行。
@@ -36,7 +37,7 @@
 - 示範教材核對說明：原文撇號統一為「'」；「Does she have science class on Monday?」未交代 she 是誰，改用「星期一＋自然課」圖卡出題；課文開頭是 Sunday，後面卻問 PE class today，遊戲不出需要判斷星期幾的題目。
 
 ## 五年級 麻糬去旅行（pet5u2/）
-- 網址：https://imacipadtw-lang.github.io/foop677/pet5u2/
+- 網址（teachers 站，已開 Pages，密碼 0686）：https://imacipadtw-lang.github.io/teachers/workbook/pet5u2/
 - 與 pet5 相同玩法與老師設定，進度分開儲存。
 - 教材核對：原文「He is ...」句子不完整，未出題；原文未標說話者，暫以中文角色標示；「I go to school on foot. He goes to school by car.」拆成兩句練習 on foot / by car。
 
